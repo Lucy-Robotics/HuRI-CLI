@@ -1,11 +1,11 @@
 # huri-cli
 
-The reference client of [HuRI](https://github.com/Lucy-Robotics/HuRI-landing):
+The reference client of [HuRI](https://github.com/Lucy-Robotics/huri-core#huri-ecosystem):
 talk to a running HuRI server from a terminal. Microphone and a text prompt
 in; the assistant's reply as text, speech and a live gesture view out.
 
 huri-cli is a **use case** of HuRI, not a part of it, like the
-[demo website](https://github.com/Lucy-Robotics/HuRI_website_demo) or the
+demo website (a private repository) or the
 [acceptance test site](https://github.com/Lucy-Robotics/HuRI_ATP_testsite).
 It uses nothing but the public client SDK of
 [huri-core](https://github.com/Lucy-Robotics/huri-core) and the curated events

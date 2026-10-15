@@ -40,7 +40,7 @@ Homepage = "https://github.com/Lucy-Robotics/huri-cli"
 Repository = "https://github.com/Lucy-Robotics/huri-cli"
 Documentation = "https://github.com/Lucy-Robotics/huri-cli#readme"
 Changelog = "https://github.com/Lucy-Robotics/huri-cli/releases"
-HuRI = "https://github.com/Lucy-Robotics/HuRI-landing"
+HuRI = "https://github.com/Lucy-Robotics/huri-core#huri-ecosystem"
 
 [tool.setuptools.packages.find]
 include = ["huri_cli*"]
