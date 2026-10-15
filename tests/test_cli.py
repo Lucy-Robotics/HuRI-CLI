@@ -1,4 +1,4 @@
-"""The reference CLI (examples/cli): wiring, audio playback, motion viewer."""
+"""huri-cli: wiring, audio playback, motion viewer."""
 
 import asyncio
 import json
@@ -8,22 +8,18 @@ from pathlib import Path
 import numpy as np
 import pytest
 import websockets
-from huri_cli.audio import AudioPlayer
-from huri_cli.main import RECEIVERS, SENDERS, build_client, run
-from huri_cli.viewer import MotionViewer, part_activity
+from huri_core.core.dataclasses.config import ClientConfig
 from huri_events.audio import Audio
 from huri_events.motion import Motion
 from omegaconf import OmegaConf
 
-from huri_core.core.dataclasses.config import ClientConfig
+from huri_cli.audio import AudioPlayer
+from huri_cli.main import RECEIVERS, SENDERS, build_client, run
+from huri_cli.viewer import MotionViewer, part_activity
 
-ROOT = Path(__file__).resolve().parents[2]
-# The shipped client configs: not the template, nor what the installer writes.
-CONFIGS = sorted(
-    p
-    for p in (ROOT / "config").glob("client_*.yaml")
-    if "template" not in p.name and not p.name.endswith(".generated.yaml")
-)
+ROOT = Path(__file__).resolve().parents[1]
+# The client configs this repository ships (config/), not huri-modules' ones.
+CONFIGS = sorted((ROOT / "config").glob("client_*.yaml"))
 
 
 def config_of(path, **overrides):
@@ -31,6 +27,14 @@ def config_of(path, **overrides):
     return ClientConfig.from_dict({**raw, "user_id": "test", **overrides}), raw.get(
         "cli", {}
     )
+
+
+def test_the_example_configs_are_shipped():
+    assert [p.name for p in CONFIGS] == [
+        "client_aux.yaml",
+        "client_full.yaml",
+        "client_text.yaml",
+    ]
 
 
 @pytest.mark.parametrize("path", CONFIGS, ids=lambda p: p.name)
