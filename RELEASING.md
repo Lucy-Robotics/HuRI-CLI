@@ -33,6 +33,7 @@ Maintainers of `Lucy-Robotics/huri-cli`:
 ## The `huri` metapackage
 
 `huri-meta/` has its own `version`. When its ranges (`huri-core[client]`,
-`huri-cli`) change, bump it in the same release PR. Publishing to PyPI, when
-done, is `python -m build huri-meta` and an upload of `huri-meta/dist/*`,
-after huri-cli itself is published.
+`huri-cli`) change, bump it in the same release PR. It is not on PyPI:
+publishing it, when done, is `python -m build huri-meta` and an upload of
+`huri-meta/dist/*`, and needs huri-core, huri-events and huri-cli published
+there first.

@@ -30,9 +30,10 @@ pip install \
 ```
 
 Pick refs that match the table in
-[Versions and compatibility](#versions-and-compatibility). A pre-release may
-also be on PyPI (`pip install --pre huri-cli`, or `pip install --pre huri`,
-see [The `huri` metapackage](#the-huri-metapackage)); git is the reference.
+[Versions and compatibility](#versions-and-compatibility). huri-core,
+huri-events and huri-cli are not on PyPI: always give them as git URLs on the
+same command line, as above. This is the only supported install; a `huri-core`
+or `huri-events` found on a package index is not HuRI's.
 
 `sounddevice` needs PortAudio (`libportaudio2` on Debian/Ubuntu, `portaudio`
 on Arch/Fedora) to open the microphone and the speakers.
@@ -105,10 +106,21 @@ is optional:
 
 ```yaml
 cli:
-  audio_in:  {sample_rate: 16000, frame_duration: 0.030}  # microphone
-  audio_out: {sample_rate: 44100, save_audio_dir: ""}     # "" = do not save
-  motion:    {save_motion_dir: ""}                        # "" = do not save
+  audio_in:                  # microphone
+    sample_rate: 16000       # Hz the microphone is opened at
+    frame_duration: 0.030    # seconds per huri.audio.in frame
+  audio_out:                 # speakers
+    sample_rate: 48000       # Hz of the device, used when it cannot open
+                             # at the incoming rate (then resampled)
+    incoming_sample_rate: 16000  # Hz of the server's huri.audio.out
+    save_audio_dir: ""       # "" = do not save
+  motion:
+    save_motion_dir: ""      # "" = do not save
 ```
+
+The values above are the defaults. Set `incoming_sample_rate` to the rate of
+the server's TTS output; the shipped configs and huri-modules' generated one
+write `incoming_sample_rate: ${cli.audio_in.sample_rate}`.
 
 The saved motion chunks (`poses`, `expressions`, `trans`, `fps`, `pts`) are
 SMPL-X parameters and can be rendered offline with the EMAGE tooling.
@@ -156,11 +168,23 @@ configs' module names against huri-modules' `registry.toml` at that ref
 ## The `huri` metapackage
 
 [`huri-meta/`](huri-meta) is the source of `huri`, a convenience distribution
-with no code: `pip install --pre huri` installs `huri-core[client]` and
-`huri-cli`, everything needed to talk to a running server. It lives here
-because the CLI is what it adds to the SDK; CI builds it on every change. It
-has its own version (`0.0.1.dev0` today) and is released with huri-cli when
-its ranges change (see [RELEASING.md](RELEASING.md)).
+with no code that depends on `huri-core[client]` and `huri-cli`, everything
+needed to talk to a running server. It lives here because the CLI is what it
+adds to the SDK; CI builds it on every change. It has its own version
+(`0.0.1.dev0` today) and is released with huri-cli when its ranges change (see
+[RELEASING.md](RELEASING.md)).
+
+`huri` is **not published on PyPI**: that needs huri-core, huri-events and
+huri-cli on PyPI first. Until then, install it from git, with the core, events
+and cli git URLs on the same command line:
+
+```sh
+pip install \
+  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@<core-ref>" \
+  "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<modules-ref>#subdirectory=packages/huri-events" \
+  "huri-cli @ git+https://github.com/Lucy-Robotics/huri-cli.git@<cli-ref>" \
+  "huri @ git+https://github.com/Lucy-Robotics/huri-cli.git@<cli-ref>#subdirectory=huri-meta"
+```
 
 ## License
 

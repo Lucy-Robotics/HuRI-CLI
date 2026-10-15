@@ -5,9 +5,9 @@
 The client config's `send:` and `subscribe:` pick among the topics below; its
 `cli:` section holds the device settings:
 
-    cli:
+    cli:  # every key is optional; these are the defaults
       audio_in:  {sample_rate: 16000, frame_duration: 0.030}
-      audio_out: {sample_rate: 44100, save_audio_dir: ""}
+      audio_out: {sample_rate: 48000, incoming_sample_rate: 16000, save_audio_dir: ""}
       motion:    {save_motion_dir: ""}
 """
 
