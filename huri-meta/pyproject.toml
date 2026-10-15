@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Lucy-Robotics/HuRI-landing"
+Homepage = "https://github.com/Lucy-Robotics/huri-core"
 # The source of this metapackage: huri-cli's huri-meta/ directory.
 Repository = "https://github.com/Lucy-Robotics/huri-cli"
 "Client SDK" = "https://github.com/Lucy-Robotics/huri-core"

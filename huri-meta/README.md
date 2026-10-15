@@ -23,6 +23,6 @@ It has no code of its own. Its source is the `huri-meta/` directory of
 https://github.com/Lucy-Robotics/huri-cli.
 
 HuRI is a realtime, modular conversational pipeline for robots and avatars.
-Start at https://github.com/Lucy-Robotics/HuRI-landing. Running a server is
-https://github.com/Lucy-Robotics/huri-modules; the framework and its client
-SDK are https://github.com/Lucy-Robotics/huri-core.
+Start at https://github.com/Lucy-Robotics/huri-core, the framework and its
+client SDK, whose README maps the whole ecosystem. Running a server is
+https://github.com/Lucy-Robotics/huri-modules.
