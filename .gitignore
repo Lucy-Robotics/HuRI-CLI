@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+/.venv*/
+/venv*/
+/uv.lock
+*.log
+# What the CLI saves when a config asks it to (save_audio_dir / save_motion_dir)
+*.wav
+*.npz
+# CI downloads huri-modules' registry here
+/registry.toml

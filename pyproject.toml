@@ -4,9 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "huri-cli"
-version = "0.1.0"
-description = "Reference command-line client for HuRI, built on the client SDK"
+version = "0.1.0.dev0"
+description = "huri-cli: the reference command-line client of HuRI, built on its client SDK"
+readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.10"
+# A use case of HuRI, not a part of it: only the client SDK and the curated
+# events, by version range (see README's "Versions and compatibility").
 # Not huri-core[server]: a client never installs Ray.
 dependencies = [
   "huri-core[client]>=0.4.0.dev0,<0.5",
@@ -17,8 +21,62 @@ dependencies = [
   "prompt-toolkit>=3.0,<3.1",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "black==26.3.1",
+  "flake8==7.3.0",
+  "flake8-toml-config==1.0.0",
+  "isort==8.0.1",
+  "mypy==1.20.2",
+  "pytest==9.0.3",
+  "tomli>=2; python_version < '3.11'",
+]
+
 [project.scripts]
 huri-cli = "huri_cli.main:main"
 
+[project.urls]
+Homepage = "https://github.com/Lucy-Robotics/huri-cli"
+Repository = "https://github.com/Lucy-Robotics/huri-cli"
+Documentation = "https://github.com/Lucy-Robotics/huri-cli#readme"
+Changelog = "https://github.com/Lucy-Robotics/huri-cli/releases"
+HuRI = "https://github.com/Lucy-Robotics/HuRI-landing"
+
 [tool.setuptools.packages.find]
 include = ["huri_cli*"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+skip_gitignore = true
+known_first_party = ["huri_cli"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203"]
+exclude = """
+  __pycache__
+  venv
+  .venv
+  build
+"""
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+strict_optional = true
+warn_unused_configs = true
+exclude = [
+  "^tests/",
+  "^build/",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

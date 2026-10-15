@@ -16,11 +16,6 @@ import asyncio
 import logging
 from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Tuple, Type
 
-from huri_events.audio import Audio
-from huri_events.motion import Motion
-from huri_events.question import RAGQuestion
-from huri_events.text import Token
-
 from huri_core.core.client import (
     HuRIClient,
     HuRISessionError,
@@ -28,6 +23,10 @@ from huri_core.core.client import (
 )
 from huri_core.core.dataclasses.config import ClientConfig
 from huri_core.core.events import EventData
+from huri_events.audio import Audio
+from huri_events.motion import Motion
+from huri_events.question import RAGQuestion
+from huri_events.text import Token
 
 from .audio import AudioPlayer
 from .senders import send_microphone, send_prompt
@@ -97,8 +96,8 @@ async def run(config: ClientConfig, cli: Optional[Mapping] = None) -> int:
         return 1
     except OSError as e:
         logger.error(
-            "cannot reach HuRI at %s: %s. Is the server deployed? "
-            "(.huri-local/status.sh; replica logs in "
+            "cannot reach HuRI at %s: %s. Is the server deployed? (with "
+            "huri-modules' installer: .huri-local/status.sh; replica logs in "
             "/tmp/ray/session_latest/logs/serve/)",
             config.huri_url,
             e,
