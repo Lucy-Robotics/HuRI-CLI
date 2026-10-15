@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64,<82"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "huri"
+version = "0.0.1.dev0"
+description = "HuRI: realtime, modular conversational AI for robots — installs the client SDK and the reference CLI"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+  "huri-core[client]>=0.4.0.dev0,<0.5",
+  "huri-cli>=0.1.0.dev0,<0.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/Lucy-Robotics/HuRI-landing"
+# The source of this metapackage: huri-cli's huri-meta/ directory.
+Repository = "https://github.com/Lucy-Robotics/huri-cli"
+"Client SDK" = "https://github.com/Lucy-Robotics/huri-core"
+
+[tool.setuptools]
+packages = []
