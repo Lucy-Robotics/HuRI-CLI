@@ -1,0 +1,125 @@
+# huri-cli's checks, on every push and pull request.
+#
+# huri-cli is a use case of HuRI, not a part of it: it is tested against
+# huri-core (client extra) and huri-events (from huri-modules) installed from
+# git at the refs below, `dev` by default, so a breaking change there shows up
+# here. To test against releases, run the workflow by hand with their tags.
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      huri_core_ref:
+        description: huri-core ref (branch or tag)
+        default: dev
+      huri_modules_ref:
+        description: huri-modules ref (branch or tag), for huri-events and registry.toml
+        default: dev
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HURI_CORE_REF: ${{ inputs.huri_core_ref || 'dev' }}
+  HURI_MODULES_REF: ${{ inputs.huri_modules_ref || 'dev' }}
+  # Never wait for credentials: a wrong ref or a private repo fails at once.
+  GIT_TERMINAL_PROMPT: "0"
+  GIT_ASKPASS: /bin/true
+
+jobs:
+  test:
+    name: pytest (python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: PortAudio, for sounddevice to import
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends libportaudio2
+      - name: huri-core[client] and huri-events at the refs
+        run: |
+          pip install \
+            "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@${HURI_CORE_REF}" \
+            "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@${HURI_MODULES_REF}#subdirectory=packages/huri-events"
+      - run: pip install -e ".[dev]"
+      - name: the server stack is not installed by a client
+        run: |
+          for m in ray fastapi; do
+            if python -c "import $m" 2>/dev/null; then
+              echo "::error::$m is installed by huri-cli"; exit 1
+            fi
+          done
+      - run: pytest -q
+      - run: huri-cli --help
+
+  lint:
+    name: lint (black, isort, flake8, mypy)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: huri-core[client] and huri-events at the refs, for mypy
+        # mypy has ignore_missing_imports; huri-core ships py.typed, so its
+        # annotations are checked against.
+        run: |
+          pip install \
+            "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@${HURI_CORE_REF}" \
+            "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@${HURI_MODULES_REF}#subdirectory=packages/huri-events"
+      - run: pip install -e ".[dev]"
+      - run: black --check huri_cli tests scripts
+      - run: isort --check-only huri_cli tests scripts
+      - run: flake8 huri_cli tests scripts
+      - run: mypy huri_cli scripts --check-untyped-defs
+
+  registry:
+    name: config module names vs huri-modules' registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "omegaconf>=2.3,<2.4"
+      - name: fetch registry.toml at HURI_MODULES_REF
+        run: |
+          curl -fsSL --retry 3 -o registry.toml \
+            "https://raw.githubusercontent.com/Lucy-Robotics/huri-modules/${HURI_MODULES_REF}/registry.toml"
+      - run: python scripts/check_config_modules.py registry.toml
+
+  build:
+    name: build huri-cli and the huri metapackage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build twine
+      - run: python -m build --outdir dist .
+      - name: huri-meta (the `huri` metapackage) stays buildable
+        run: python -m build --outdir dist huri-meta
+      - run: twine check dist/*
+      - name: the metapackage pulls in the client SDK and the CLI, nothing else
+        run: |
+          unzip -p dist/huri-*.whl '*/METADATA' | tee meta.txt | grep '^Requires-Dist'
+          grep -q '^Requires-Dist: huri-core\[client\]' meta.txt
+          grep -q '^Requires-Dist: huri-cli' meta.txt
+          test "$(grep -c '^Requires-Dist' meta.txt)" -eq 2
