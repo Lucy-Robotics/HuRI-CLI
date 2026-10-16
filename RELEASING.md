@@ -14,13 +14,14 @@ example to read, not an API.
 
 ## Steps
 
-Maintainers of `Lucy-Robotics/huri-cli`:
+Maintainers of `Lucy-Robotics/HuRI-CLI`:
 
 1. On `dev`, check the dependency ranges in `pyproject.toml` against the
    huri-core and huri-events releases this version supports, and update the
    compatibility table in README's "Versions and compatibility". CI must be
    green with `HURI_CORE_REF` / `HURI_MODULES_REF` set to those release tags
-   (run the workflow by hand with them).
+   (run the workflow by hand with them). When the huri-core range moves to a
+   new minor, move the default `HURI_CORE_REF` of `ci.yml` with it.
 2. Open a release PR on `dev` that sets `version` (no `.devN`) and summarizes
    the changes; merge it, then merge `dev` into `main` with a PR named
    `Release X.Y.Z`.
