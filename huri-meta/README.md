@@ -14,13 +14,13 @@ HuRI's):
 pip install \
   "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@<core-ref>" \
   "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<modules-ref>#subdirectory=packages/huri-events" \
-  "huri-cli @ git+https://github.com/Lucy-Robotics/huri-cli.git@<cli-ref>" \
-  "huri @ git+https://github.com/Lucy-Robotics/huri-cli.git@<cli-ref>#subdirectory=huri-meta"
+  "huri-cli @ git+https://github.com/Lucy-Robotics/HuRI-CLI.git@<cli-ref>" \
+  "huri @ git+https://github.com/Lucy-Robotics/HuRI-CLI.git@<cli-ref>#subdirectory=huri-meta"
 huri-cli --config client.yaml
 ```
 
 It has no code of its own. Its source is the `huri-meta/` directory of
-https://github.com/Lucy-Robotics/huri-cli.
+https://github.com/Lucy-Robotics/HuRI-CLI.
 
 HuRI is a realtime, modular conversational pipeline for robots and avatars.
 Start at https://github.com/Lucy-Robotics/huri-core, the framework and its

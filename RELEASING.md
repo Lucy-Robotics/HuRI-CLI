@@ -14,7 +14,7 @@ example to read, not an API.
 
 ## Steps
 
-Maintainers of `Lucy-Robotics/huri-cli`:
+Maintainers of `Lucy-Robotics/HuRI-CLI`:
 
 1. On `dev`, check the dependency ranges in `pyproject.toml` against the
    huri-core and huri-events releases this version supports, and update the
