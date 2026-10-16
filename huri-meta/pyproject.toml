@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "huri"
-version = "0.0.1.dev0"
+version = "0.0.1"
 description = "HuRI: realtime, modular conversational AI for robots — installs the client SDK and the reference CLI"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = [
-  "huri-core[client]>=0.4.0.dev0,<0.5",
-  "huri-cli>=0.1.0.dev0,<0.2",
+  "huri-core[client]>=0.4,<0.5",
+  "huri-cli>=0.1,<0.2",
 ]
 
 [project.urls]

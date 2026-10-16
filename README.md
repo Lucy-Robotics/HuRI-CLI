@@ -157,12 +157,13 @@ version. See [RELEASING.md](RELEASING.md).
 
 | huri-cli | huri-core | huri-events |
 |---|---|---|
-| 0.1.x | 0.4.x (`>=0.4.0.dev0,<0.5`) | 0.1.x |
+| 0.1.x | 0.4.x (`>=0.4,<0.5`) | 0.1.x |
 
 CI tests against huri-core and huri-modules at the refs set by the
 `HURI_CORE_REF` and `HURI_MODULES_REF` variables of
-[ci.yml](.github/workflows/ci.yml) (`dev` by default), and checks the example
-configs' module names against huri-modules' `registry.toml` at that ref
+[ci.yml](.github/workflows/ci.yml): huri-core at the release tag inside the
+`huri-core[client]` range (`0.4.0`), huri-modules at `dev`. It also checks the example
+configs' module names against huri-modules' `registry.toml` at its ref
 ([scripts/check_config_modules.py](scripts/check_config_modules.py)).
 
 ## The `huri` metapackage
@@ -171,7 +172,7 @@ configs' module names against huri-modules' `registry.toml` at that ref
 with no code that depends on `huri-core[client]` and `huri-cli`, everything
 needed to talk to a running server. It lives here because the CLI is what it
 adds to the SDK; CI builds it on every change. It has its own version
-(`0.0.1.dev0` today) and is released with huri-cli when its ranges change (see
+(`0.0.1` today) and is released with huri-cli when its ranges change (see
 [RELEASING.md](RELEASING.md)).
 
 `huri` is **not published on PyPI**: that needs huri-core, huri-events and
