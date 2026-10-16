@@ -2,8 +2,11 @@
 #
 # huri-cli is a use case of HuRI, not a part of it: it is tested against
 # huri-core (client extra) and huri-events (from huri-modules) installed from
-# git at the refs below, `dev` by default, so a breaking change there shows up
-# here. To test against releases, run the workflow by hand with their tags.
+# git at the refs below. huri-core: the release tag inside this version's
+# `huri-core[client]` range (core's `dev` carries the next minor's .dev0, which
+# the range excludes); it moves with the range. huri-modules: `dev`, so a
+# breaking change to huri-events shows up here. Run the workflow by hand to
+# test other refs.
 name: CI
 
 on:
@@ -14,7 +17,7 @@ on:
     inputs:
       huri_core_ref:
         description: huri-core ref (branch or tag)
-        default: dev
+        default: "0.4.0"
       huri_modules_ref:
         description: huri-modules ref (branch or tag), for huri-events and registry.toml
         default: dev
@@ -27,7 +30,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  HURI_CORE_REF: ${{ inputs.huri_core_ref || 'dev' }}
+  HURI_CORE_REF: ${{ inputs.huri_core_ref || '0.4.0' }}
   HURI_MODULES_REF: ${{ inputs.huri_modules_ref || 'dev' }}
   # Never wait for credentials: a wrong ref or a private repo fails at once.
   GIT_TERMINAL_PROMPT: "0"
