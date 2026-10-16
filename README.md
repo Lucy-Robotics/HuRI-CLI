@@ -1,11 +1,11 @@
-# HuRI-Cli
+# HuRI-CLI
 
 The reference client of [HuRI](https://github.com/Lucy-Robotics/huri-core#huri-ecosystem):
 talk to a running HuRI server from a terminal. Microphone and a text prompt
 in; the assistant's reply as text, speech and a live gesture view out.
 It installs as the `huri-cli` package and command.
 
-HuRI-Cli is a **use case** of HuRI, not a part of it, like the
+HuRI-CLI is a **use case** of HuRI, not a part of it, like the
 demo website (a private repository) or the
 [acceptance test site](https://github.com/Lucy-Robotics/HuRI_ATP_testsite).
 It uses nothing but the public client SDK of
@@ -27,7 +27,7 @@ ref (a release tag such as `0.1.0`, or `dev`):
 pip install \
   "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@<core-ref>" \
   "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<modules-ref>#subdirectory=packages/huri-events" \
-  "huri-cli @ git+https://github.com/Lucy-Robotics/HuRI-Cli.git@<cli-ref>"
+  "huri-cli @ git+https://github.com/Lucy-Robotics/HuRI-CLI.git@<cli-ref>"
 ```
 
 Pick refs that match the table in
@@ -184,8 +184,8 @@ and cli git URLs on the same command line:
 pip install \
   "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@<core-ref>" \
   "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<modules-ref>#subdirectory=packages/huri-events" \
-  "huri-cli @ git+https://github.com/Lucy-Robotics/HuRI-Cli.git@<cli-ref>" \
-  "huri @ git+https://github.com/Lucy-Robotics/HuRI-Cli.git@<cli-ref>#subdirectory=huri-meta"
+  "huri-cli @ git+https://github.com/Lucy-Robotics/HuRI-CLI.git@<cli-ref>" \
+  "huri @ git+https://github.com/Lucy-Robotics/HuRI-CLI.git@<cli-ref>#subdirectory=huri-meta"
 ```
 
 ## License

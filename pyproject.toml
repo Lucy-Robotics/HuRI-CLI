@@ -36,10 +36,10 @@ dev = [
 huri-cli = "huri_cli.main:main"
 
 [project.urls]
-Homepage = "https://github.com/Lucy-Robotics/HuRI-Cli"
-Repository = "https://github.com/Lucy-Robotics/HuRI-Cli"
-Documentation = "https://github.com/Lucy-Robotics/HuRI-Cli#readme"
-Changelog = "https://github.com/Lucy-Robotics/HuRI-Cli/releases"
+Homepage = "https://github.com/Lucy-Robotics/HuRI-CLI"
+Repository = "https://github.com/Lucy-Robotics/HuRI-CLI"
+Documentation = "https://github.com/Lucy-Robotics/HuRI-CLI#readme"
+Changelog = "https://github.com/Lucy-Robotics/HuRI-CLI/releases"
 HuRI = "https://github.com/Lucy-Robotics/huri-core#huri-ecosystem"
 
 [tool.setuptools.packages.find]
