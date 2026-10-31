@@ -1,5 +1,7 @@
 # HuRI-CLI
 
+[![CI](https://github.com/Lucy-Robotics/HuRI-CLI/actions/workflows/ci.yml/badge.svg)](https://github.com/Lucy-Robotics/HuRI-CLI/actions/workflows/ci.yml)
+
 The reference client of [HuRI](https://github.com/Lucy-Robotics/huri-core#huri-ecosystem):
 talk to a running HuRI server from a terminal. Microphone and a text prompt
 in; the assistant's reply as text, speech and a live gesture view out.
@@ -165,7 +167,8 @@ CI tests against huri-core and huri-modules at the refs set by the
 [ci.yml](.github/workflows/ci.yml): huri-core at the release tag inside the
 `huri-core[client]` range (`0.4.0`), huri-modules at `dev`. It also checks the example
 configs' module names against huri-modules' `registry.toml` at its ref
-([scripts/check_config_modules.py](scripts/check_config_modules.py)).
+([scripts/check_config_modules.py](scripts/check_config_modules.py)). It runs
+on every push, to any branch, and on every pull request.
 
 ## The `huri` metapackage
 
