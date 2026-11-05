@@ -55,7 +55,7 @@ flake8 huri_cli tests scripts && mypy huri_cli scripts --check-untyped-defs
 
 huri-core is the release huri-modules' `dev` is built against (its
 `HURI_CORE_REF`), as in CI: huri-core's `dev` is `0.5.0.dev0`, outside the
-`<0.5` range of huri-events 0.1, so pip cannot install the two together.
+`<0.5` range of huri-events, so pip cannot install the two together.
 Local checkouts work as well: `pip install -e "../huri-core[client]"
 -e ../huri-modules/packages/huri-events`. The tests never open an audio
 device nor reach the network.
@@ -163,7 +163,8 @@ version. See [RELEASING.md](RELEASING.md).
 
 | huri-cli | huri-core | huri-events |
 |---|---|---|
-| 0.1.x | 0.4.x (`>=0.4,<0.5`) | 0.1.x |
+| 0.1.0 | 0.4.x (`>=0.4,<0.5`) | 0.1.x |
+| 0.1.1 | 0.4.x (`>=0.4,<0.5`) | 0.1.x and 0.2.x (`>=0.1,<0.3`) |
 
 CI tests against huri-core and huri-modules at the refs set by the
 `HURI_CORE_REF` and `HURI_MODULES_REF` variables of
