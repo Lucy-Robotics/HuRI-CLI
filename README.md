@@ -43,7 +43,7 @@ on Arch/Fedora) to open the microphone and the speakers.
 
 ```sh
 pip install \
-  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@dev" \
+  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@0.4.0" \
   "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@dev#subdirectory=packages/huri-events"
 pip install -e ".[dev]"
 pytest -q
@@ -51,6 +51,9 @@ black --check huri_cli tests scripts && isort --check-only huri_cli tests script
 flake8 huri_cli tests scripts && mypy huri_cli scripts --check-untyped-defs
 ```
 
+huri-core is the release huri-modules' `dev` is built against (its
+`HURI_CORE_REF`), as in CI: huri-core's `dev` is `0.5.0.dev0`, outside the
+`<0.5` range of huri-events 0.1, so pip cannot install the two together.
 Local checkouts work as well: `pip install -e "../huri-core[client]"
 -e ../huri-modules/packages/huri-events`. The tests never open an audio
 device nor reach the network.
