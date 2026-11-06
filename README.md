@@ -1,5 +1,7 @@
 # HuRI-CLI
 
+[![CI](https://github.com/Lucy-Robotics/HuRI-CLI/actions/workflows/ci.yml/badge.svg)](https://github.com/Lucy-Robotics/HuRI-CLI/actions/workflows/ci.yml)
+
 The reference client of [HuRI](https://github.com/Lucy-Robotics/huri-core#huri-ecosystem):
 talk to a running HuRI server from a terminal. Microphone and a text prompt
 in; the assistant's reply as text, speech and a live gesture view out.
@@ -43,7 +45,7 @@ on Arch/Fedora) to open the microphone and the speakers.
 
 ```sh
 pip install \
-  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@dev" \
+  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@0.4.0" \
   "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@dev#subdirectory=packages/huri-events"
 pip install -e ".[dev]"
 pytest -q
@@ -51,6 +53,9 @@ black --check huri_cli tests scripts && isort --check-only huri_cli tests script
 flake8 huri_cli tests scripts && mypy huri_cli scripts --check-untyped-defs
 ```
 
+huri-core is the release huri-modules' `dev` is built against (its
+`HURI_CORE_REF`), as in CI: huri-core's `dev` is `0.5.0.dev0`, outside the
+`<0.5` range of huri-events, so pip cannot install the two together.
 Local checkouts work as well: `pip install -e "../huri-core[client]"
 -e ../huri-modules/packages/huri-events`. The tests never open an audio
 device nor reach the network.
@@ -158,14 +163,16 @@ version. See [RELEASING.md](RELEASING.md).
 
 | huri-cli | huri-core | huri-events |
 |---|---|---|
-| 0.1.x | 0.4.x (`>=0.4,<0.5`) | 0.1.x |
+| 0.1.0 | 0.4.x (`>=0.4,<0.5`) | 0.1.x |
+| 0.1.1 | 0.4.x (`>=0.4,<0.5`) | 0.1.x and 0.2.x (`>=0.1,<0.3`) |
 
 CI tests against huri-core and huri-modules at the refs set by the
 `HURI_CORE_REF` and `HURI_MODULES_REF` variables of
 [ci.yml](.github/workflows/ci.yml): huri-core at the release tag inside the
 `huri-core[client]` range (`0.4.0`), huri-modules at `dev`. It also checks the example
 configs' module names against huri-modules' `registry.toml` at its ref
-([scripts/check_config_modules.py](scripts/check_config_modules.py)).
+([scripts/check_config_modules.py](scripts/check_config_modules.py)). It runs
+on every push, to any branch, and on every pull request.
 
 ## The `huri` metapackage
 
