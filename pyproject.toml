@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "huri-cli"
-version = "0.1.1"
+version = "0.1.2"
 description = "huri-cli: the reference command-line client of HuRI, built on its client SDK"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -28,6 +28,7 @@ dev = [
   "flake8-toml-config==1.0.0",
   "isort==8.0.1",
   "mypy==1.20.2",
+  "packaging>=23",
   "pytest==9.0.3",
   "tomli>=2; python_version < '3.11'",
 ]
