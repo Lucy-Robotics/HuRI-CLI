@@ -23,12 +23,29 @@ Maintainers of `Lucy-Robotics/HuRI-CLI`:
    (run the workflow by hand with them). When the huri-core range moves to a
    new minor, move the default `HURI_CORE_REF` of `ci.yml` with it.
 2. Open a release PR on `dev` that sets `version` (no `.devN`) and summarizes
-   the changes; merge it, then merge `dev` into `main` with a PR named
-   `Release X.Y.Z`.
-3. Tag `main`'s merge commit `X.Y.Z` (no `v` prefix; the first release is
-   `0.1.0`), push the tag and publish a GitHub release whose notes are the
-   changelog. Then publish to PyPI, from the tag: `python -m build -o dist .`,
-   then `twine check dist/* && twine upload dist/*`. PyPI never accepts a
-   version twice.
+   the changes; merge it, then open the PR from `dev` into `main` named
+   `Release X.Y.Z`. Its **Release** check (`.github/workflows/release.yml`)
+   fails when the release would be wrong: a pre-release version, or a version
+   already tagged or on PyPI. Its job summary says what merging will publish.
+3. Merge it. The Release workflow then tags `main`'s merge commit `X.Y.Z` (no
+   `v` prefix), publishes the GitHub release (notes generated from the merged
+   pull requests since the previous tag; edit them afterwards if needed), and
+   waits for a maintainer to approve the `pypi` environment before uploading
+   huri-cli to PyPI. It ends by installing it from PyPI. PyPI never accepts a
+   version twice. A failed upload: "Re-run failed jobs" on that run; or, while
+   `main` is still at the release commit, run the Release workflow by hand on
+   `main`.
 4. Tell huri-modules: its `versions.env` pins `HURI_CLI_REF`, which its
    installer installs; its release sets it to this tag.
+
+## Publishing setup (once)
+
+The Release workflow uploads with PyPI's trusted publishing: no token is
+stored. `huri-cli` has, on pypi.org (Manage → Publishing), a GitHub publisher
+with owner `Lucy-Robotics`, repository `HuRI-CLI`, workflow `release.yml` and
+environment `pypi`. The repository's `pypi` environment requires a
+maintainer's approval and only accepts `main`. If the repository moves to
+another GitHub owner, add the new publisher and remove the old one.
+
+By hand, if the workflow cannot run: from the tag,
+`python -m build -o dist . && twine check dist/* && twine upload dist/*`.
