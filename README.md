@@ -171,8 +171,12 @@ CI tests against huri-core and huri-modules at the refs set by the
 [ci.yml](.github/workflows/ci.yml): huri-core at the release tag inside the
 `huri-core[client]` range (`0.4.0`), huri-modules at `dev`. It also checks the example
 configs' module names against huri-modules' `registry.toml` at its ref
-([scripts/check_config_modules.py](scripts/check_config_modules.py)). It runs
-on every push, to any branch, and on every pull request.
+([scripts/check_config_modules.py](scripts/check_config_modules.py)), and
+fails when `huri_cli/` imports huri-core outside the client SDK
+(`huri_core.core.client`, `.events`, `.dataclasses.config`;
+[tests/test_client_sdk_only.py](tests/test_client_sdk_only.py)): huri-core's
+other modules may change in a patch release. It runs on every push, to any
+branch, and on every pull request.
 
 ## The `huri` metapackage
 
