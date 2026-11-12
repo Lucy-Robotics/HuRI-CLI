@@ -169,6 +169,7 @@ version. See [RELEASING.md](RELEASING.md).
 |---|---|---|
 | 0.1.0 | 0.4.x (`>=0.4,<0.5`) | 0.1.x |
 | 0.1.1 | 0.4.x (`>=0.4,<0.5`) | 0.1.x and 0.2.x (`>=0.1,<0.3`) |
+| 0.1.2 | 0.4.x (`>=0.4,<0.5`) | 0.1.x and 0.2.x (`>=0.1,<0.3`) |
 
 CI tests against huri-core and huri-modules at the refs set by the
 `HURI_CORE_REF` and `HURI_MODULES_REF` variables of

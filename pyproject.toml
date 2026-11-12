@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "huri-cli"
-version = "0.1.1"
+version = "0.1.2"
 description = "huri-cli: the reference command-line client of HuRI, built on its client SDK"
 readme = "README.md"
 license = { file = "LICENSE" }
