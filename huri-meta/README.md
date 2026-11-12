@@ -4,11 +4,13 @@ A convenience package that installs the HuRI client SDK
 (`huri-core[client]`) and the reference command-line client (`huri-cli`), to
 talk to a running HuRI server.
 
-It is **not published on PyPI yet**: huri-core, huri-events and huri-cli are
-not on PyPI either, so publishing `huri` needs them there first. Until then,
-install it from git, giving every HuRI package as a git URL on the same
-command line (a `huri-core` or `huri-events` found on a package index is not
-HuRI's):
+```sh
+pip install huri
+huri-cli --config client.yaml
+```
+
+To install a ref that is not released (`dev`, a branch) instead, give every
+HuRI package as a git URL on the same command line:
 
 ```sh
 pip install \

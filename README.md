@@ -22,8 +22,19 @@ The easy way is huri-modules' installer: it sets up a server **and** installs
 huri-cli next to it (`./install.sh --no-cli` skips it), then prints the
 command that starts a session.
 
-On its own, in a virtual environment (Python 3.10 to 3.12), from git at a
-ref (a release tag such as `0.1.0`, or `dev`):
+On its own, in a virtual environment (Python 3.10 to 3.12), from PyPI:
+
+```sh
+pip install huri-cli
+```
+
+pip picks the huri-core and huri-events releases within huri-cli's ranges
+(see [Versions and compatibility](#versions-and-compatibility)). `pip install
+huri` installs the same, through [the `huri` metapackage](#the-huri-metapackage).
+
+To run a ref that is not released (`dev`, a branch), install from git instead,
+giving every HuRI package as a git URL on the same command line, at refs that
+match the table:
 
 ```sh
 pip install \
@@ -31,12 +42,6 @@ pip install \
   "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<modules-ref>#subdirectory=packages/huri-events" \
   "huri-cli @ git+https://github.com/Lucy-Robotics/HuRI-CLI.git@<cli-ref>"
 ```
-
-Pick refs that match the table in
-[Versions and compatibility](#versions-and-compatibility). huri-core,
-huri-events and huri-cli are not on PyPI: always give them as git URLs on the
-same command line, as above. This is the only supported install; a `huri-core`
-or `huri-events` found on a package index is not HuRI's.
 
 `sounddevice` needs PortAudio (`libportaudio2` on Debian/Ubuntu, `portaudio`
 on Arch/Fedora) to open the microphone and the speakers.
@@ -184,12 +189,11 @@ branch, and on every pull request.
 with no code that depends on `huri-core[client]` and `huri-cli`, everything
 needed to talk to a running server. It lives here because the CLI is what it
 adds to the SDK; CI builds it on every change. It has its own version
-(`0.0.1` today) and is released with huri-cli when its ranges change (see
+(`0.0.2` today) and is released with huri-cli when its ranges change (see
 [RELEASING.md](RELEASING.md)).
 
-`huri` is **not published on PyPI**: that needs huri-core, huri-events and
-huri-cli on PyPI first. Until then, install it from git, with the core, events
-and cli git URLs on the same command line:
+`huri` is on PyPI: `pip install huri`. From git, give the core, events and cli
+git URLs on the same command line:
 
 ```sh
 pip install \

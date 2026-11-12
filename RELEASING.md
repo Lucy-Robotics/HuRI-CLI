@@ -27,14 +27,16 @@ Maintainers of `Lucy-Robotics/HuRI-CLI`:
    `Release X.Y.Z`.
 3. Tag `main`'s merge commit `X.Y.Z` (no `v` prefix; the first release is
    `0.1.0`), push the tag and publish a GitHub release whose notes are the
-   changelog.
+   changelog. Then publish to PyPI, from the tag: `python -m build -o dist .`,
+   plus `python -m build -o dist huri-meta` when `huri` was bumped, then
+   `twine check dist/* && twine upload --skip-existing dist/*`. PyPI never
+   accepts a version twice.
 4. Tell huri-modules: its `versions.env` pins `HURI_CLI_REF`, which its
    installer installs; its release sets it to this tag.
 
 ## The `huri` metapackage
 
 `huri-meta/` has its own `version`. When its ranges (`huri-core[client]`,
-`huri-cli`) change, bump it in the same release PR. It is not on PyPI:
-publishing it, when done, is `python -m build huri-meta` and an upload of
-`huri-meta/dist/*`, and needs huri-core, huri-events and huri-cli published
-there first.
+`huri-cli`) change, or its README (its PyPI page), bump it in the same
+release PR; step 3 then uploads it to PyPI with huri-cli. Its dependencies must
+already be on PyPI at versions within its ranges.
