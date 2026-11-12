@@ -108,7 +108,7 @@ jobs:
       - run: python scripts/check_config_modules.py registry.toml
 
   build:
-    name: build huri-cli and the huri metapackage
+    name: build huri-cli
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -117,12 +117,4 @@ jobs:
           python-version: "3.12"
       - run: pip install build twine
       - run: python -m build --outdir dist .
-      - name: huri-meta (the `huri` metapackage) stays buildable
-        run: python -m build --outdir dist huri-meta
       - run: twine check dist/*
-      - name: the metapackage pulls in the client SDK and the CLI, nothing else
-        run: |
-          unzip -p dist/huri-*.whl '*/METADATA' | tee meta.txt | grep '^Requires-Dist'
-          grep -q '^Requires-Dist: huri-core\[client\]' meta.txt
-          grep -q '^Requires-Dist: huri-cli' meta.txt
-          test "$(grep -c '^Requires-Dist' meta.txt)" -eq 2

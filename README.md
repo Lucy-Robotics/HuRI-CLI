@@ -29,8 +29,7 @@ pip install huri-cli
 ```
 
 pip picks the huri-core and huri-events releases within huri-cli's ranges
-(see [Versions and compatibility](#versions-and-compatibility)). `pip install
-huri` installs the same, through [the `huri` metapackage](#the-huri-metapackage).
+(see [Versions and compatibility](#versions-and-compatibility)).
 
 To run a ref that is not released (`dev`, a branch), install from git instead,
 giving every HuRI package as a git URL on the same command line, at refs that
@@ -182,26 +181,6 @@ fails when `huri_cli/` imports huri-core outside the client SDK
 [tests/test_client_sdk_only.py](tests/test_client_sdk_only.py)): huri-core's
 other modules may change in a patch release. It runs on every push, to any
 branch, and on every pull request.
-
-## The `huri` metapackage
-
-[`huri-meta/`](huri-meta) is the source of `huri`, a convenience distribution
-with no code that depends on `huri-core[client]` and `huri-cli`, everything
-needed to talk to a running server. It lives here because the CLI is what it
-adds to the SDK; CI builds it on every change. It has its own version
-(`0.0.2` today) and is released with huri-cli when its ranges change (see
-[RELEASING.md](RELEASING.md)).
-
-`huri` is on PyPI: `pip install huri`. From git, give the core, events and cli
-git URLs on the same command line:
-
-```sh
-pip install \
-  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@<core-ref>" \
-  "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@<modules-ref>#subdirectory=packages/huri-events" \
-  "huri-cli @ git+https://github.com/Lucy-Robotics/HuRI-CLI.git@<cli-ref>" \
-  "huri @ git+https://github.com/Lucy-Robotics/HuRI-CLI.git@<cli-ref>#subdirectory=huri-meta"
-```
 
 ## License
 
