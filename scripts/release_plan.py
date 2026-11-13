@@ -1,6 +1,7 @@
 """Plan a release: what the Release workflow tags, publishes and uploads.
 
     python scripts/release_plan.py
+    python scripts/release_plan.py next-dev X.Y.Z
 
 Run by .github/workflows/release.yml, from a full clone (tags included):
 
@@ -13,6 +14,9 @@ Run by .github/workflows/release.yml, from a full clone (tags included):
 
 Prints the plan (and adds it to the job summary), writes `release`,
 `create`, `version` and `previous` to $GITHUB_OUTPUT, exits 1 on a problem.
+
+`next-dev X.Y.Z` (run on a checkout of dev) prints the version dev should move
+to after release X.Y.Z, `X.(Y+1).0.dev0`, or nothing when dev is already above it.
 """
 
 import json
@@ -33,6 +37,19 @@ else:  # pragma: no cover - python 3.10
 
 ROOT = Path(__file__).resolve().parents[1]
 OnPyPI = Callable[[str, str], bool]
+
+
+def read_version() -> str:
+    with open(ROOT / "pyproject.toml", "rb") as f:
+        return tomllib.load(f)["project"]["version"]
+
+
+def next_dev(released: str, current: str) -> Optional[str]:
+    """The version dev moves to after `released`; None if `current` is above it."""
+
+    if Version(current) > Version(released):
+        return None
+    return f"{Version(released).major}.{Version(released).minor + 1}.0.dev0"
 
 
 def on_pypi(name: str, version: str) -> bool:
@@ -105,8 +122,7 @@ def main(pypi: OnPyPI = on_pypi) -> int:
         print(f"::error::releases run on main only, not {ref}")
         _output(release="false")
         return 1
-    with open(ROOT / "pyproject.toml", "rb") as f:
-        cli = tomllib.load(f)["project"]["version"]
+    cli = read_version()
 
     tags = _git("tag", "--list").stdout.split()
     # The release before this one (a patch on an older line compares to its own).
@@ -161,4 +177,7 @@ def main(pypi: OnPyPI = on_pypi) -> int:
 
 
 if __name__ == "__main__":
+    if sys.argv[1:2] == ["next-dev"]:
+        print(next_dev(sys.argv[2], read_version()) or "")
+        sys.exit(0)
     sys.exit(main())

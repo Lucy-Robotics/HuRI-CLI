@@ -35,7 +35,11 @@ Maintainers of `Lucy-Robotics/HuRI-CLI`:
    version twice. A failed upload: "Re-run failed jobs" on that run; or, while
    `main` is still at the release commit, run the Release workflow by hand on
    `main`.
-4. Tell huri-modules: its `versions.env` pins `HURI_CLI_REF`, which its
+4. The workflow also opens a PR into `dev` that sets `version` to the next
+   `X.(Y+1).0.dev0` (`chore: start X.(Y+1).0.dev0 after the X.Y.Z release`).
+   CI does not start on a PR opened by `GITHUB_TOKEN`: close and reopen it (or
+   push to it), then merge it.
+5. Tell huri-modules: its `versions.env` pins `HURI_CLI_REF`, which its
    installer installs; its release sets it to this tag.
 
 ## Publishing setup (once)
