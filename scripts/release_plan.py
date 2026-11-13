@@ -146,7 +146,7 @@ def main(pypi: OnPyPI = on_pypi) -> int:
                 "| what | action |",
                 "|---|---|",
                 f"| tag `{cli}` on main's merge commit | create |",
-                f"| GitHub release `{cli}` | publish, marked latest |",
+                f"| GitHub release `{cli}` | publish |",
                 f"| PyPI `huri-cli {cli}` | upload |",
             ]
         )
