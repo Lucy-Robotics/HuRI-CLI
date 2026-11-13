@@ -73,6 +73,11 @@ huri-cli --config config/client_full.yaml
 huri-cli --config config/client_text.yaml --log-level DEBUG --log-file cli.log
 ```
 
+`--log-level` accepts DEBUG, INFO, WARNING, ERROR and CRITICAL, ignoring case.
+An unknown level prints usage and exits with code 2. A missing or invalid
+config file, or an invalid server URL, prints a short error and exits with
+code 1. Server URLs must start with `ws://` or `wss://`.
+
 Type a question at the `>>` prompt, `\exit` to quit (or Ctrl-C). If the
 server refuses the session (a module it does not serve, a topic nobody
 emits), huri-cli prints why and the modules the server has.

@@ -2,6 +2,8 @@
 
 import asyncio
 import json
+import logging
+import re
 import wave
 from pathlib import Path
 
@@ -13,6 +15,7 @@ from huri_events.audio import Audio
 from huri_events.motion import Motion
 from omegaconf import OmegaConf
 
+import huri_cli.main as cli_main
 from huri_cli.audio import AudioPlayer
 from huri_cli.main import RECEIVERS, SENDERS, build_client, run
 from huri_cli.viewer import MotionViewer, part_activity
@@ -50,6 +53,100 @@ def test_unsupported_topic_is_reported_with_the_supported_ones():
     config, _ = config_of(CONFIGS[0], subscribe=["acme.servo_angles"])
     with pytest.raises(ValueError, match="acme.servo_angles.*receives"):
         build_client(config, {})
+
+
+def test_main_reports_a_missing_config(tmp_path, caplog, capsys):
+    path = tmp_path / "nope.yaml"
+    with pytest.raises(SystemExit) as exc:
+        cli_main.main(["--config", str(path)])
+    assert exc.value.code == 1
+    (message,) = caplog.messages
+    assert str(path) in message and "No such file" in message
+    assert len(message.splitlines()) == 1
+    assert "Traceback" not in caplog.text + capsys.readouterr().err
+
+
+def test_main_reports_invalid_yaml(tmp_path, caplog, capsys):
+    path = tmp_path / "broken.yaml"
+    path.write_text("a: [")
+    with pytest.raises(SystemExit) as exc:
+        cli_main.main(["--config", str(path)])
+    assert exc.value.code == 1
+    (message,) = caplog.messages
+    assert str(path) in message and re.search(r"line \d+", message)
+    assert len(message.splitlines()) == 1
+    assert "Traceback" not in caplog.text + capsys.readouterr().err
+
+
+@pytest.mark.parametrize("contents", ["[]", "huri_url: ${missing}"])
+def test_main_reports_config_loading_errors(contents, tmp_path, caplog):
+    path = tmp_path / "invalid.yaml"
+    path.write_text(contents)
+    with pytest.raises(SystemExit) as exc:
+        cli_main.main(["--config", str(path)])
+    assert exc.value.code == 1
+    (message,) = caplog.messages
+    assert str(path) in message and len(message.splitlines()) == 1
+    assert "Traceback" not in caplog.text
+
+
+def test_main_reports_invalid_server_url(tmp_path, caplog, capsys):
+    path = tmp_path / "bad_url.yaml"
+    path.write_text(
+        f"huri_url: localhost:8000\nuser_id_file_path: {tmp_path / 'user_id'}\n"
+    )
+    with pytest.raises(SystemExit) as exc:
+        cli_main.main(["--config", str(path)])
+    assert exc.value.code == 1
+    (message,) = caplog.messages
+    assert "localhost:8000" in message and "ws://" in message and "wss://" in message
+    assert len(message.splitlines()) == 1
+    assert "Traceback" not in caplog.text + capsys.readouterr().err
+
+
+def test_main_refuses_unknown_log_level(tmp_path, capsys):
+    with pytest.raises(SystemExit) as exc:
+        cli_main.main(
+            ["--config", str(tmp_path / "unused.yaml"), "--log-level", "verbose"]
+        )
+    assert exc.value.code == 2
+    error = capsys.readouterr().err
+    assert "usage:" in error and "--log-level" in error
+    assert all(
+        level in error for level in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+    )
+    assert "Traceback" not in error
+
+
+def test_main_accepts_lowercase_debug(tmp_path, monkeypatch, caplog):
+    path = tmp_path / "valid.yaml"
+    path.write_text(f"user_id_file_path: {tmp_path / 'user_id'}\n")
+    configured = []
+
+    def configure(**kwargs):
+        configured.append(kwargs["level"])
+        monkeypatch.setattr(logging.getLogger(), "level", logging.DEBUG)
+
+    class Client:
+        user_id = "test"
+
+        async def connect(self):
+            logging.getLogger("huri_cli").debug("connected test client")
+
+        async def wait_closed(self):
+            pass
+
+        async def close(self):
+            pass
+
+    monkeypatch.setattr(logging, "basicConfig", configure)
+    monkeypatch.setattr(cli_main, "build_client", lambda config, cli: Client())
+    with pytest.raises(SystemExit) as exc:
+        cli_main.main(["--config", str(path), "--log-level", "debug"])
+    assert exc.value.code == 0
+    assert configured == ["DEBUG"]
+    assert "connected test client" in caplog.messages
+    assert "session started, user_id=test" in caplog.messages
 
 
 # --- audio ---------------------------------------------------------------------
