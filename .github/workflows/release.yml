@@ -6,6 +6,8 @@
 # - On a push to main whose huri-cli version is not tagged yet, `release` tags
 #   the merge commit and publishes the GitHub release, then `publish` uploads
 #   huri-cli to PyPI once a maintainer approves the `pypi` environment. A push to main whose version is already tagged does nothing.
+# - `next-dev` then opens the PR on dev that starts the next .dev0 (it runs
+#   dev's copy of scripts/release_plan.py: dev always contains main).
 # - A failed upload: "Re-run failed jobs" on that run; or, while main is still
 #   at the release commit, run this workflow by hand on main. PyPI keeps what
 #   it has. Releases and uploads never run from a pull request or another ref.
@@ -76,6 +78,55 @@ jobs:
           gh release create "$VERSION" --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" --title "$VERSION" \
             --generate-notes ${PREVIOUS:+--notes-start-tag "$PREVIOUS"}
+
+  next-dev:
+    name: propose the next development version on dev
+    # Not gated on the upload: dev moves on once the release is tagged.
+    needs: [plan, release]
+    if: >-
+      github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+      && needs.release.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "packaging>=23"
+      - name: open the PR that sets version to the next .dev0
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.plan.outputs.version }}
+        run: |
+          NEXT=$(python scripts/release_plan.py next-dev "$VERSION")
+          if [ -z "$NEXT" ]; then
+            echo "dev is already above $VERSION: nothing to propose."; exit 0
+          fi
+          BRANCH="chore/start-$NEXT"
+          TITLE="chore: start $NEXT after the $VERSION release"
+          # Decide on the PR, not the branch: a push whose `gh pr create` failed
+          # leaves a branch without a PR, and a re-run must open it.
+          if [ -n "$(gh pr list --head "$BRANCH" --state all --json number --jq '.[].number')" ]; then
+            echo "$BRANCH already has a PR: nothing to do."; exit 0
+          fi
+          if ! git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            # The first `version =` line only: [project]'s.
+            sed -i "0,/^version = .*/s//version = \"$NEXT\"/" pyproject.toml
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git switch -c "$BRANCH"
+            git commit -am "$TITLE"
+            git push origin "$BRANCH"
+          fi
+          gh pr create --base dev --head "$BRANCH" --title "$TITLE" --body "$(printf '%s\n' \
+            "Sets \`version\` to \`$NEXT\` on dev, now that $VERSION is released." \
+            "" \
+            "CI does not start on a pull request opened by GITHUB_TOKEN: close and reopen this PR, or push to its branch, to run it.")"
 
   publish:
     name: upload to PyPI
