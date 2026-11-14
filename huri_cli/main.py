@@ -143,7 +143,7 @@ def setup_logging(level: str, log_file: Optional[str]) -> None:
     if log_file:
         handlers.append(logging.FileHandler(log_file))
     logging.basicConfig(
-        level=level.upper(),
+        level=level,
         format="%(asctime)s %(levelname)-7s %(name)s: %(message)s",
         datefmt="%H:%M:%S",
         handlers=handlers,
