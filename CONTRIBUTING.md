@@ -6,7 +6,9 @@ which repository takes which change, how to submit a pull request, the commit
 format, the conventions and the response times. This page adds what is
 specific to HuRI-CLI.
 
-- **Branch from `dev`** and open the pull request to `dev`.
+- **Branch from `dev`** and open the pull request to `dev`. Unless you are on
+  the team, fork the repository first and branch in your fork. On your first
+  pull request, CI waits until a maintainer approves the run.
 - **Before pushing**, run the lint and the tests of
   [Working on huri-cli](README.md#working-on-huri-cli). The tests never open an
   audio device or reach the network; keep it that way.
