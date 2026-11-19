@@ -24,7 +24,10 @@ Maintainers of `Lucy-Robotics/HuRI-CLI`:
    new minor, move the default `HURI_CORE_REF` of `ci.yml` with it.
 2. Open a release PR on `dev` that sets `version` (no `.devN`) and summarizes
    the changes; merge it, then open the PR from `dev` into `main` named
-   `Release X.Y.Z`. Its **Release** check (`.github/workflows/release.yml`)
+   `Release X.Y.Z`. `main` takes pull requests from `dev` only (the Release
+   check fails otherwise), merged with a merge commit, the only method its
+   ruleset allows: `dev` then always contains `main`, and the next release PR
+   cannot conflict. Its **Release** check (`.github/workflows/release.yml`)
    fails when the release would be wrong: a pre-release version, or a version
    already tagged or on PyPI. Its job summary says what merging will publish.
 3. Merge it. The Release workflow then tags `main`'s merge commit `X.Y.Z` (no
