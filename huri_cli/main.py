@@ -28,6 +28,9 @@ from huri_events.audio import Audio
 from huri_events.motion import Motion
 from huri_events.question import RAGQuestion
 from huri_events.text import Token
+from omegaconf.errors import OmegaConfBaseException
+from websockets.exceptions import InvalidURI
+from yaml import YAMLError
 
 from .audio import AudioPlayer
 from .senders import send_microphone, send_prompt
@@ -104,6 +107,13 @@ async def run(config: ClientConfig, cli: Optional[Mapping] = None) -> int:
             e,
         )
         return 1
+    except InvalidURI as e:
+        logger.error(
+            "invalid HuRI URL %s: %s. Use a ws:// or wss:// URL",
+            config.huri_url,
+            e,
+        )
+        return 1
     logger.info("session started, user_id=%s", client.user_id)
     try:
         loops: List[asyncio.Future] = [
@@ -134,7 +144,7 @@ def setup_logging(level: str, log_file: Optional[str]) -> None:
     if log_file:
         handlers.append(logging.FileHandler(log_file))
     logging.basicConfig(
-        level=level.upper(),
+        level=level,
         format="%(asctime)s %(levelname)-7s %(name)s: %(message)s",
         datefmt="%H:%M:%S",
         handlers=handlers,
@@ -146,7 +156,13 @@ def main(argv: Optional[List[str]] = None) -> None:
         prog="huri-cli", description=__doc__.split("\n\n")[0]
     )
     parser.add_argument("--config", required=True, help="client config file (YAML)")
-    parser.add_argument("--log-level", default="INFO", help="DEBUG, INFO, WARNING...")
+    parser.add_argument(
+        "--log-level",
+        default="INFO",
+        type=str.upper,
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="logging level (case-insensitive)",
+    )
     parser.add_argument("--log-file", help="also write the logs to this file")
     args = parser.parse_args(argv)
 
@@ -157,8 +173,12 @@ def main(argv: Optional[List[str]] = None) -> None:
             f"huri-cli: cannot open log file {args.log_file!r}: {exc}", file=sys.stderr
         )
         raise SystemExit(1) from None
-    raw = load_raw_client_config(args.config)
-    config = ClientConfig.from_dict(raw)
+    try:
+        raw = load_raw_client_config(args.config)
+        config = ClientConfig.from_dict(raw)
+    except (OSError, YAMLError, OmegaConfBaseException, ValueError) as e:
+        logger.error("cannot load config %s: %s", args.config, " ".join(str(e).split()))
+        raise SystemExit(1)
     try:
         code = asyncio.run(run(config, dict(raw.get("cli") or {})))
     except KeyboardInterrupt:
