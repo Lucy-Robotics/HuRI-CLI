@@ -288,3 +288,55 @@ def test_run_reports_a_rejected_session():
             return await asyncio.wait_for(run(config), timeout=10)
 
     assert asyncio.run(scenario()) == 1
+
+
+def test_main_reports_an_unopenable_log_file(tmp_path, capsys, monkeypatch):
+    import huri_cli.main as cli
+
+    path = tmp_path / "missing" / "cli.log"
+
+    def unexpected_config(*args):
+        pytest.fail("config must not be loaded after logging fails")
+
+    monkeypatch.setattr(cli, "load_raw_client_config", unexpected_config)
+    with pytest.raises(SystemExit) as exc:
+        cli.main(["--config", "unused.yaml", "--log-file", str(path)])
+    assert exc.value.code == 1
+    error = capsys.readouterr().err
+    assert str(path) in error
+    assert "Traceback" not in error
+    assert len(error.splitlines()) == 1
+    assert not path.parent.exists()
+
+
+def test_main_writes_logs_to_an_existing_folder(tmp_path, monkeypatch):
+    import logging
+
+    import huri_cli.main as cli
+
+    root = logging.getLogger()
+    previous = root.handlers[:]
+    previous_level = root.level
+    root.handlers = []
+    path = tmp_path / "cli.log"
+
+    async def fake_run(config, options):
+        logging.getLogger("huri_cli").info("session started")
+        return 0
+
+    monkeypatch.setattr(cli, "run", fake_run)
+    config_path = tmp_path / "client.yaml"
+    config_path.write_text(
+        (ROOT / "config/client_text.yaml").read_text()
+        + f"\nuser_id_file_path: {tmp_path / 'user-id'}\n"
+    )
+    try:
+        with pytest.raises(SystemExit) as exc:
+            cli.main(["--config", str(config_path), "--log-file", str(path)])
+        assert exc.value.code == 0
+        assert "session started" in path.read_text()
+    finally:
+        for handler in root.handlers:
+            handler.close()
+        root.handlers = previous
+        root.setLevel(previous_level)

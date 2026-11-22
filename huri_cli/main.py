@@ -14,6 +14,7 @@ The client config's `send:` and `subscribe:` pick among the topics below; its
 import argparse
 import asyncio
 import logging
+import sys
 from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Tuple, Type
 
 from huri_core.core.client import (
@@ -165,7 +166,13 @@ def main(argv: Optional[List[str]] = None) -> None:
     parser.add_argument("--log-file", help="also write the logs to this file")
     args = parser.parse_args(argv)
 
-    setup_logging(args.log_level, args.log_file)
+    try:
+        setup_logging(args.log_level, args.log_file)
+    except OSError as exc:
+        print(
+            f"huri-cli: cannot open log file {args.log_file!r}: {exc}", file=sys.stderr
+        )
+        raise SystemExit(1) from None
     try:
         raw = load_raw_client_config(args.config)
         config = ClientConfig.from_dict(raw)
