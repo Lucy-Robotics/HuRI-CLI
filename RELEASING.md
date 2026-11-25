@@ -42,8 +42,11 @@ Maintainers of `Lucy-Robotics/HuRI-CLI`:
    `X.(Y+1).0.dev0` (`chore: start X.(Y+1).0.dev0 after the X.Y.Z release`).
    CI does not start on a PR opened by `GITHUB_TOKEN`: close and reopen it (or
    push to it), then merge it.
-5. Tell huri-modules: its `versions.env` pins `HURI_CLI_REF`, which its
-   installer installs; its release sets it to this tag.
+5. Nothing to tell huri-modules: its installer installs the newest huri-cli
+   on PyPI whose ranges accept the huri-core it installs, so a fresh install
+   or a re-run picks this release up once it is on PyPI. A huri-core minor
+   with no huri-cli release yet gets a server without the client, and a
+   warning.
 
 ## Publishing setup (once)
 
