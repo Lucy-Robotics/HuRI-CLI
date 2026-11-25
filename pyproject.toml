@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "huri-cli"
-version = "0.1.2"
+version = "0.2.0"
 description = "huri-cli: the reference command-line client of HuRI, built on its client SDK"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -13,8 +13,8 @@ requires-python = ">=3.10"
 # events, by version range (see README's "Versions and compatibility").
 # Not huri-core[server]: a client never installs Ray.
 dependencies = [
-  "huri-core[client]>=0.4,<0.5",
-  "huri-events>=0.1,<0.3",
+  "huri-core[client]>=0.5,<0.6",
+  "huri-events>=0.1,<0.4",
   "numpy>=1.26,<2",
   "scipy",
   "sounddevice>=0.5,<0.6",
@@ -30,6 +30,7 @@ dev = [
   "mypy==1.20.2",
   "packaging>=23",
   "pytest==9.0.3",
+  "types-PyYAML>=6,<7",
   "tomli>=2; python_version < '3.11'",
 ]
 

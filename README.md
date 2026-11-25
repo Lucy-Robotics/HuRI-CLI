@@ -49,7 +49,7 @@ on Arch/Fedora) to open the microphone and the speakers.
 
 ```sh
 pip install \
-  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@0.4.0" \
+  "huri-core[client] @ git+https://github.com/Lucy-Robotics/huri-core.git@0.5.0" \
   "huri-events @ git+https://github.com/Lucy-Robotics/huri-modules.git@dev#subdirectory=packages/huri-events"
 pip install -e ".[dev]"
 pytest -q
@@ -58,8 +58,8 @@ flake8 huri_cli tests scripts && mypy huri_cli scripts --check-untyped-defs
 ```
 
 huri-core is the release huri-modules' `dev` is built against (its
-`HURI_CORE_REF`), as in CI: huri-core's `dev` is `0.5.0.dev0`, outside the
-`<0.5` range of huri-events, so pip cannot install the two together.
+`HURI_CORE_REF`), as in CI: huri-core's `dev` is `0.6.0.dev0`, outside the
+`<0.6` range of huri-events, so pip cannot install the two together.
 Local checkouts work as well: `pip install -e "../huri-core[client]"
 -e ../huri-modules/packages/huri-events`. The tests never open an audio
 device nor reach the network.
@@ -72,6 +72,11 @@ Start a HuRI server first (huri-modules' installer, or its `deploy/`), then:
 huri-cli --config config/client_full.yaml
 huri-cli --config config/client_text.yaml --log-level DEBUG --log-file cli.log
 ```
+
+`--log-level` accepts DEBUG, INFO, WARNING, ERROR and CRITICAL, ignoring case.
+An unknown level prints usage and exits with code 2. A missing or invalid
+config file, or an invalid server URL, prints a short error and exits with
+code 1. Server URLs must start with `ws://` or `wss://`.
 
 Type a question at the `>>` prompt, `\exit` to quit (or Ctrl-C). If the
 server refuses the session (a module it does not serve, a topic nobody
@@ -170,11 +175,12 @@ version. See [RELEASING.md](RELEASING.md).
 | 0.1.0 | 0.4.x (`>=0.4,<0.5`) | 0.1.x |
 | 0.1.1 | 0.4.x (`>=0.4,<0.5`) | 0.1.x and 0.2.x (`>=0.1,<0.3`) |
 | 0.1.2 | 0.4.x (`>=0.4,<0.5`) | 0.1.x and 0.2.x (`>=0.1,<0.3`) |
+| 0.2.0 | 0.5.x (`>=0.5,<0.6`) | 0.1.x to 0.3.x (`>=0.1,<0.4`) |
 
 CI tests against huri-core and huri-modules at the refs set by the
 `HURI_CORE_REF` and `HURI_MODULES_REF` variables of
 [ci.yml](.github/workflows/ci.yml): huri-core at the release tag inside the
-`huri-core[client]` range (`0.4.0`), huri-modules at `dev`. It also checks the example
+`huri-core[client]` range (`0.5.0`), huri-modules at `dev`. It also checks the example
 configs' module names against huri-modules' `registry.toml` at its ref
 ([scripts/check_config_modules.py](scripts/check_config_modules.py)), and
 fails when `huri_cli/` imports huri-core outside the client SDK

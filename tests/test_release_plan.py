@@ -50,6 +50,20 @@ def test_release_tags_are_the_final_versions_oldest_first():
     assert [str(v) for v in plan.release_tags(tags)] == ["0.1.0", "0.1.1", "0.10.0"]
 
 
+# --- next_dev(): the version dev moves to after a release ---
+
+
+def test_the_next_development_version_is_the_next_minor():
+    assert plan.next_dev("0.2.0", "0.2.0.dev0") == "0.3.0.dev0"
+    assert plan.next_dev("0.2.2", "0.2.0.dev0") == "0.3.0.dev0"
+    assert plan.next_dev("0.1.2", "0.1.2") == "0.2.0.dev0"  # dev still at the release
+
+
+def test_dev_already_above_the_release_needs_no_next_version():
+    assert plan.next_dev("0.1.3", "0.2.0.dev0") is None
+    assert plan.next_dev("0.2.0", "0.3.0.dev0") is None
+
+
 # --- main(): the decision that tags and uploads ---
 
 
